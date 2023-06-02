@@ -1,0 +1,63 @@
+image:
+  file: .gitpod.Dockerfile
+
+tasks:
+  - name: Futurenet
+    init: |
+      docker pull stellar/quickstart:soroban-dev@sha256:a057ec6f06c6702c005693f8265ed1261e901b153a754e97cf18b0962257e872
+    command: |
+      docker run --rm -it \
+      -p 8000:8000 \
+      --name stellar \
+      stellar/quickstart:soroban-dev@sha256:a057ec6f06c6702c005693f8265ed1261e901b153a754e97cf18b0962257e872 \
+      --futurenet \
+      --enable-soroban-rpc
+  - name: "Albedo Signer"
+    command: |
+      cd ~/.local/_client
+      clear
+      npm run start
+  - name: CLI - Futurenet
+    env:
+      SOROBAN_RPC_URL: "http://127.0.0.1:8000/soroban/rpc"
+      SOROBAN_NETWORK_PASSPHRASE: "Test SDF Future Network ; October 2022"
+    command: |
+      source ~/.local/bash-hook
+      clear
+  - name: CLI - Sandbox
+    init: |
+      cargo clean
+      cargo fetch
+      cargo build --package soroban-hello-world-contract --target wasm32-unknown-unknown --release
+      cargo test --package soroban-hello-world-contract
+    command: |
+      gp open README.md
+      clear
+
+vscode:
+  extensions:
+    - vadimcn.vscode-lldb
+    - rust-lang.rust-analyzer
+
+github:
+  prebuilds:
+    master: true
+    branches: true
+    pullRequests: true
+    pullRequestsFromForks: true
+    addCheck: false
+    addComment: true
+    addBadge: true
+
+ports:
+  - name: Futurenet
+    port: 8000
+    visibility: public
+    onOpen: ignore
+  - name: Albedo Signer
+    port: 3000
+    visibility: public
+    onOpen: ignore
+  - port: 4226
+    visibility: private
+    onOpen: ignore

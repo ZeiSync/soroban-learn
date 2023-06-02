@@ -1,0 +1,24 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "quests/1-hello-world",
+    "quests/2-auth-store",
+    "quests/3-reverse-engineer",
+    "quests/4-cross-contract",
+    "quests/5-custom-types",
+    "quests/6-asset-interop"
+]
+
+[profile.release]
+opt-level = "z"
+overflow-checks = true
+debug = 0
+strip = "symbols"
+debug-assertions = false
+panic = "abort"
+codegen-units = 1
+lto = true
+
+[workspace.dependencies.soroban-sdk]
+version = "0.7.0"
